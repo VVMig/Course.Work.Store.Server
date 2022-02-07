@@ -1,5 +1,7 @@
-import { IUserLoginBody, IUserRegistrationBody } from '../interfaces/userController';
+import { IGoogleOAuth2Query, IUserLoginBody, IUserRefreshTokenBody, IUserRegistrationBody, IUserVerificationParams } from '../interfaces/userController';
 import { NextFunction, Request, Response } from 'express';
+import { AuthRequest } from '../interfaces/authRequest';
+import { googleAuthUrl } from '../configs/googleOAuth2';
 import userService from '../services/userService';
 
 class UserController {
@@ -22,6 +24,64 @@ class UserController {
             const user = await userService.login(email, password);
 
             return res.json(user);
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async refreshToken(req: Request<any, any, IUserRefreshTokenBody>, res: Response, next: NextFunction) {
+        try {
+            const { refreshToken } = req.body;
+
+            const user = await userService.refreshToken(refreshToken);
+
+            return res.json(user);
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async getUserData(req: AuthRequest, res: Response, next: NextFunction) {
+        try {
+            const userData = req.user;
+
+            const user = await userService.getUserData(userData.id);
+
+            return res.json(user);
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async verifyUser(req: Request<IUserVerificationParams>, res: Response, next: NextFunction) {
+        try {
+            const { id } = req.params;
+
+            const isVerificationSuccess = await userService.verifyUser(id);
+
+            if (isVerificationSuccess) {
+                res.redirect(process.env.CLIENT_VERIFICATION_URL_SUCCESS);
+            } else {
+                res.redirect(process.env.CLIENT_VERIFICATION_URL_ERROR);
+            }
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async gmailAuth(req: Request, res: Response, next: NextFunction) {
+        try {
+            res.redirect(googleAuthUrl);
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async gmailAuthCallback(req: Request<any, any, any, IGoogleOAuth2Query>, res: Response, next: NextFunction) {
+        try {
+            const user = await userService.googleLogin(req.query.code);
+
+            res.json(user);
         } catch (error) {
             next(error);
         }

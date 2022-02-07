@@ -3,6 +3,9 @@ import { ApiRoutes } from './constants/routes';
 import apiErrorMiddleware from './middlewares/ApiErrorMiddleware';
 import express from 'express';
 import mongoose from 'mongoose';
+import { swaggerApiOptions } from './configs/swagger';
+import swaggerJSDoc from 'swagger-jsdoc';
+import swaggerUI from 'swagger-ui-express';
 import userRouter from './routes/userRoutes';
 
 const PORT = process.env.PORT ?? 3000;
@@ -10,11 +13,13 @@ const app = express();
 
 dotenv.config();
 
+const swaggerSpec = swaggerJSDoc(swaggerApiOptions);
+
 //Routes
 app.use(express.json());
 app.use(ApiRoutes.USER, userRouter);
+app.use(ApiRoutes.DOCS, swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 app.use(apiErrorMiddleware);
-
 
 const start = async () => {
     try {

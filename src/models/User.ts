@@ -20,7 +20,7 @@ const userSchema: Schema<IUser> = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    verifiedToken: {
+    verifiedUrl: {
         type: String
     },
     token: {
