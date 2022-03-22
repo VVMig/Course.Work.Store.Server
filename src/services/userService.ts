@@ -1,4 +1,4 @@
-import { ApiRoutes, Routes } from '../constants/routes';
+import { ApiRoutes, Routes } from '../constants/Routes';
 import ApiError from '../exceptions/api-error';
 import UserDto from '../dtos/userDto';
 import { UserErrorMessages } from "../constants/ErrorMessages";
@@ -55,6 +55,10 @@ class UserService {
         const user = await UserModel.findOne({ email });
 
         if (!user) {
+            throw ApiError.BadRequest(UserErrorMessages.WRONG_DATA);
+        }
+
+        if (!user.password) {
             throw ApiError.BadRequest(UserErrorMessages.WRONG_DATA);
         }
 

@@ -1,5 +1,5 @@
 import * as express from 'express';
-import { Routes } from '../constants/routes';
+import { Routes } from '../constants/Routes';
 import { UserController } from '../controllers/userController';
 import authMiddleware from '../middlewares/ApiAuthMiddleware';
 

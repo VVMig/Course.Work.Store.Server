@@ -1,6 +1,7 @@
 export enum ApiErrorMessages {
     UNAUTHORIZED = 'User is unauthorized',
-    INTERNAL_ERROR = 'Something went wrong'
+    INTERNAL_ERROR = 'Something went wrong',
+    ACCESS_DENIED = 'You do not have permission to access this resource'
 }
 
 export enum UserErrorMessages {

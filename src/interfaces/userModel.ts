@@ -1,4 +1,5 @@
 import { Document, ObjectId, Schema } from "mongoose";
+import { UserRoles } from "constants/Roles";
 
 export interface IUser extends Document {
     _id: ObjectId;
@@ -10,6 +11,7 @@ export interface IUser extends Document {
     verifiedUrl: string;
     token: string;
     refreshToken: string;
+    role: UserRoles;
 }
 
 export type UserDocument = Document<unknown, any, IUser> & IUser & {

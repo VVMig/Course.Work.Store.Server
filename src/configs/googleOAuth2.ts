@@ -1,9 +1,10 @@
+import { ApiRoutes, Routes } from "../constants/Routes";
 import { google } from "googleapis";
 
 const oauth2Client = new google.auth.OAuth2({
     clientId: process.env.GMAIL_CLIENT_ID || '8183718671-14dctcgoatjr0v072d46k0e6roohjuvi.apps.googleusercontent.com',
     clientSecret: process.env.GMAIL_CLIENT_SECRET || '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',
-    redirectUri: 'http://localhost:3000/api/user/gmailAuthCallback'
+    redirectUri: process.env.URL ? `${process.env.URL}${ApiRoutes.USER}${Routes.USER_GMAIL_AUTH_CALLBACK}` : 'http://localhost:3000/api/user/gmailAuthCallback'
 });
 
 google.options({

@@ -20,11 +20,7 @@ class GoogleAuthService {
             audience: process.env.GMAIL_CLIENT_ID
         });
 
-        console.log(ticket);
-
         const payload = ticket.getPayload();
-
-        console.log(payload);
 
         return payload;
     }

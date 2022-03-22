@@ -13,7 +13,7 @@ class MailService {
         });
 
         await transporter.sendMail({
-            from: 'qwewqe',
+            from: 'Course Work',
             to,
             subject: 'Account verification',
             html: `

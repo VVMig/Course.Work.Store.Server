@@ -1,8 +1,9 @@
 import * as dotenv from 'dotenv';
-import { ApiRoutes } from './constants/routes';
+import { ApiRoutes } from './constants/Routes';
 import apiErrorMiddleware from './middlewares/ApiErrorMiddleware';
 import express from 'express';
 import mongoose from 'mongoose';
+import productRouter from './routes/productRoutes';
 import { swaggerApiOptions } from './configs/swagger';
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUI from 'swagger-ui-express';
@@ -18,6 +19,7 @@ const swaggerSpec = swaggerJSDoc(swaggerApiOptions);
 //Routes
 app.use(express.json());
 app.use(ApiRoutes.USER, userRouter);
+app.use(ApiRoutes.PRODUCT, productRouter);
 app.use(ApiRoutes.DOCS, swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 app.use(apiErrorMiddleware);
 
