@@ -9,5 +9,7 @@ const router = express.Router();
 const productController = new ProductController();
 
 router.post(Routes.PRODUCT_ADD, authMiddleware, adminMiddleware, productController.addProduct);
+router.put(Routes.PRODUCT_REMOVE, authMiddleware, adminMiddleware, productController.removeProduct);
+router.get(Routes.PRODUCT_CATEGORIES, productController.getCategories);
 
 export default router;

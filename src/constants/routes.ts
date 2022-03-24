@@ -12,5 +12,7 @@ export enum Routes {
     USER_VERIFICATION = '/verification',
     USER_GMAIL_AUTH = '/gmailAuth',
     USER_GMAIL_AUTH_CALLBACK = '/gmailAuthCallback',
-    PRODUCT_ADD = '/add'
+    PRODUCT_ADD = '/add',
+    PRODUCT_REMOVE = '/remove',
+    PRODUCT_CATEGORIES = '/categories'
 }

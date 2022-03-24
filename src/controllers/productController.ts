@@ -1,15 +1,60 @@
-import { IGoogleOAuth2Query, IUserLoginBody, IUserRefreshTokenBody, IUserRegistrationBody, IUserVerificationParams } from '../interfaces/userController';
-import { NextFunction, Request, Response } from 'express';
+import { NextFunction, Response, Request } from 'express';
 import { AuthRequest } from '../interfaces/authRequest';
-import { googleAuthUrl } from '../configs/googleOAuth2';
-import userService from '../services/userService';
+import { IAddProduct } from '../interfaces/productController';
+import { StatusCodes } from '../constants/StatusCodes';
+import productService from '../services/productService';
+import { getAllCategories } from '../helpers/common'
 
 class ProductController {
-    async addProduct(req: AuthRequest, res: Response, next: NextFunction) {
+    async addProduct(req: AuthRequest<IAddProduct>, res: Response, next: NextFunction) {
         try {
-            console.log(req.user);
+            const {
+                amount,
+                briefInformation,
+                description,
+                images,
+                price,
+                title,
+                commonId,
+                category
+            } = req.body;
 
-            res.json(req.user);
+            const product = await productService.addProduct({
+                amount,
+                briefInformation,
+                description,
+                images,
+                price,
+                title,
+                commonId,
+                category
+            });
+
+            res.json(product);
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async removeProduct(req: AuthRequest<{ id: string }>, res: Response, next: NextFunction) {
+        try {
+            const {
+                id
+            } = req.body;
+
+            await productService.removeProduct(id);
+
+            res.status(StatusCodes.SUCCESS).json();
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async getCategories(req: Request, res: Response, next: NextFunction) {
+        try {
+            res.json({
+                categories: getAllCategories()
+            });
         } catch (error) {
             next(error);
         }
