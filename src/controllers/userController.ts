@@ -1,4 +1,4 @@
-import { IGoogleOAuth2Query, IUserLoginBody, IUserRefreshTokenBody, IUserRegistrationBody, IUserVerificationParams } from '../interfaces/userController';
+import { ICartAddBody, IGoogleOAuth2Query, IPurchaseBody, IUserLoginBody, IUserRefreshTokenBody, IUserRegistrationBody, IUserVerificationParams } from '../interfaces/userController';
 import { NextFunction, Request, Response } from 'express';
 import { AuthRequest } from '../interfaces/authRequest';
 import { googleAuthUrl } from '../configs/googleOAuth2';
@@ -82,6 +82,42 @@ class UserController {
             const user = await userService.googleLogin(req.query.code);
 
             res.json(user);
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async addCart(req: AuthRequest<ICartAddBody>, res: Response, next: NextFunction) {
+        try {
+            const cart = await userService.addCart(req.user.id, req.body.id);
+
+            res.json({
+                cart
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async removeCart(req: AuthRequest<ICartAddBody>, res: Response, next: NextFunction) {
+        try {
+            const cart = await userService.removeCart(req.user.id, req.body.id);
+
+            res.json({
+                cart
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async purchase(req: AuthRequest<IPurchaseBody>, res: Response, next: NextFunction) {
+        try {
+            const { address, amount, commentary, id, tel } = req.body;
+
+            const cart = await userService.purchase(req.user.id, id, address, amount, commentary, tel);
+
+            res.json(cart);
         } catch (error) {
             next(error);
         }

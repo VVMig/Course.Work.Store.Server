@@ -1,4 +1,5 @@
 import { Document, ObjectId, Schema } from "mongoose";
+import { IProduct } from "./productModel";
 import { UserRoles } from "constants/Roles";
 
 export interface IUser extends Document {
@@ -12,6 +13,7 @@ export interface IUser extends Document {
     token: string;
     refreshToken: string;
     role: UserRoles;
+    cart: IProduct[];
 }
 
 export type UserDocument = Document<unknown, any, IUser> & IUser & {

@@ -1,7 +1,7 @@
 import { ApiRoutes, Routes } from '../constants/Routes';
 import ApiError from '../exceptions/api-error';
+import { CommonErrorMessages, UserErrorMessages } from "../constants/ErrorMessages";
 import UserDto from '../dtos/userDto';
-import { UserErrorMessages } from "../constants/ErrorMessages";
 import { UserModel } from "../models/User";
 import bcrypt from 'bcrypt';
 import { generateUserResponse } from '../helpers/userServiceHelper';
@@ -9,6 +9,9 @@ import googleAuthService from './googleAuthService';
 import mailService from './mailService';
 import tokenService from './tokenService';
 import { v4 as uuid_v4 } from "uuid";
+import { ProductModel } from '../models/Product';
+import { UserRoles } from '../constants/Roles';
+import { generateProductResponse } from '../helpers/productServiceHelper';
 
 class UserService {
     async registration(email?: string, password?: string, firstName?: string, lastName?: string) {
@@ -52,7 +55,7 @@ class UserService {
             throw ApiError.BadRequest(UserErrorMessages.REQUIRED_PASSWORD_EMAIL);
         }
 
-        const user = await UserModel.findOne({ email });
+        const user = await UserModel.findOne({ email }).populate('cart');
 
         if (!user) {
             throw ApiError.BadRequest(UserErrorMessages.WRONG_DATA);
@@ -76,7 +79,7 @@ class UserService {
     async googleLogin(code?: string) {
         const { email, given_name, family_name } = await googleAuthService.authUser(code);
 
-        let user = await UserModel.findOne({ email });
+        let user = await UserModel.findOne({ email }).populate('cart');
 
         if (!user) {
             user = await UserModel.create({
@@ -125,9 +128,9 @@ class UserService {
     }
 
     async getUserData(_id: string) {
-        const user = await UserModel.findOne({ _id });
+        const user = await UserModel.findOne({ _id }).populate('cart');
 
-        const userDto = new UserDto({ ...user.toObject(), id: `${user._id}` });
+        const userDto = new UserDto({ ...user.toObject(), cart: user.cart, id: `${user._id}` });
 
         return userDto;
     }
@@ -148,6 +151,96 @@ class UserService {
         await user.save();
 
         return true;
+    }
+
+    async addCart(userId: string, id?: string) {
+        if (!id) {
+            throw ApiError.BadRequest(CommonErrorMessages.INVALID_ID);
+        }
+
+        const user = await UserModel.findById(userId).populate('cart');
+
+        const product = await ProductModel.findById(id);
+
+        if (!product) {
+            throw ApiError.BadRequest(CommonErrorMessages.INVALID_ID);
+        }
+
+        if (user.cart.some(item => `${item._id}` === id)) {
+            throw ApiError.BadRequest(UserErrorMessages.ALREADY_IN_CART);
+        }
+
+        user.cart.push(product);
+
+        await user.save();
+
+        return user.cart;
+    }
+
+    async removeCart(userId: string, id?: string) {
+        if (!id) {
+            throw ApiError.BadRequest(CommonErrorMessages.INVALID_ID);
+        }
+
+        const user = await UserModel.findById(userId).populate('cart');
+
+        const product = await ProductModel.findById(id);
+
+        if (!product) {
+            throw ApiError.BadRequest(CommonErrorMessages.INVALID_ID);
+        }
+
+        const productIndex = user.cart.findIndex(item => `${item._id}` === id);
+
+        if (productIndex < 0) {
+            return user.cart;
+        }
+
+        user.cart.splice(productIndex, 1);
+
+        await user.save();
+
+        return user.cart;
+    }
+
+    async purchase(userId: string, id?: string, address?: string, amount?: number, commentary?: string, tel?: string) {
+        if (!id) {
+            throw ApiError.BadRequest(CommonErrorMessages.INVALID_ID);
+        }
+
+        if (!tel) {
+            throw ApiError.BadRequest(UserErrorMessages.ENTER_TEL);
+        }
+
+        if (!address) {
+            throw ApiError.BadRequest(UserErrorMessages.ENTER_ADDRESS);
+        }
+
+        const user = await UserModel.findById(userId);
+        const product = await ProductModel.findById(id);
+
+        if (!product) {
+            throw ApiError.BadRequest(CommonErrorMessages.INVALID_ID);
+        }
+
+        const admin = await UserModel.findOne({ role: UserRoles.ADMIN });
+
+        if (!admin) {
+            throw ApiError.BadRequest(CommonErrorMessages.ADMIN_REQUIRED);
+        }
+
+        const userDto = new UserDto({ ...user.toObject(), cart: user.cart, id: `${user._id}` });
+        const { product: productDto } = await generateProductResponse(product);
+
+        await mailService.sendTransactionMail(admin.email, userDto, productDto, address, tel, commentary, amount);
+
+        product.amount = product.amount - 1;
+
+        await product.save();
+
+        const cart = await this.removeCart(userId, id);
+
+        return cart;
     }
 }
 

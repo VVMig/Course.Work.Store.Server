@@ -2,8 +2,8 @@ import { NextFunction, Response, Request } from 'express';
 import { AuthRequest } from '../interfaces/authRequest';
 import { IAddProduct } from '../interfaces/productController';
 import { StatusCodes } from '../constants/StatusCodes';
+import { getAllCategories } from '../helpers/common';
 import productService from '../services/productService';
-import { getAllCategories } from '../helpers/common'
 
 class ProductController {
     async addProduct(req: AuthRequest<IAddProduct>, res: Response, next: NextFunction) {
@@ -55,6 +55,30 @@ class ProductController {
             res.json({
                 categories: getAllCategories()
             });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async getProduct(req: Request<any, any, any, { id?: string }>, res: Response, next: NextFunction) {
+        try {
+            const { id } = req.query;
+
+            const product = await productService.getProduct(id);
+
+            res.json(product);
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async getProductsByCategory(req: Request<any, any, any, { category?: string }>, res: Response, next: NextFunction) {
+        try {
+            const { category } = req.query;
+
+            const products = await productService.getProductsByCategory(category);
+
+            res.json(products);
         } catch (error) {
             next(error);
         }

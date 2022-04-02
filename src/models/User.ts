@@ -33,7 +33,12 @@ const userSchema: Schema<IUser> = new mongoose.Schema({
     },
     refreshToken: {
         type: String
-    }
+    },
+    cart: [{
+        type: mongoose.Schema.Types.ObjectId,
+        default: [],
+        ref: 'Product'
+    }]
 });
 
 export const UserModel: Model<IUser> = mongoose.model('User', userSchema);

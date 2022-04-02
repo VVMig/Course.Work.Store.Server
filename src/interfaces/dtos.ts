@@ -1,5 +1,5 @@
 import { Category } from 'constants/Category';
-import { IProductImage } from '../interfaces/productModel';
+import { IProduct, IProductImage } from '../interfaces/productModel';
 import { UserRoles } from "constants/Roles";
 
 export interface IUserDTO {
@@ -9,6 +9,7 @@ export interface IUserDTO {
     lastName?: string;
     isVerified?: boolean;
     role?: UserRoles;
+    cart: IProduct[];
 }
 
 export interface IProductDTO {

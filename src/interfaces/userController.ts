@@ -19,3 +19,14 @@ export interface IUserVerificationParams {
 export interface IGoogleOAuth2Query {
     code?: string;
 }
+
+export interface ICartAddBody {
+    id?: string;
+}
+
+export interface IPurchaseBody extends ICartAddBody {
+    amount?: number;
+    address?: string;
+    commentary?: string;
+    tel?: string;
+}

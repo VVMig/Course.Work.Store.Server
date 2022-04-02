@@ -5,7 +5,8 @@ export enum ApiErrorMessages {
 }
 
 export enum CommonErrorMessages {
-    INVALID_ID = 'Invalid id'
+    INVALID_ID = 'Invalid id',
+    ADMIN_REQUIRED = 'Admin is required'
 }
 
 export enum UserErrorMessages {
@@ -13,7 +14,10 @@ export enum UserErrorMessages {
     EMAIL_EXIST = 'User with that email already exist',
     REQUIRED_NAME = 'Please specify your name',
     WRONG_DATA = 'Please enter your correct email or password',
-    WRONG_VERIFICATION_LINK = 'Link is incorrect'
+    WRONG_VERIFICATION_LINK = 'Link is incorrect',
+    ALREADY_IN_CART = 'You have already added this product to the cart',
+    ENTER_TEL = 'Mobile number is required',
+    ENTER_ADDRESS = 'Address is required'
 }
 
 export enum ProductErrorMessages {

@@ -1,3 +1,6 @@
 export enum Category {
-    IPhone = 'IPhone'
+    iPhone = 'iPhone',
+    Mac = 'Mac',
+    Watch = 'Watch',
+    AirPods = 'AirPods'
 }
