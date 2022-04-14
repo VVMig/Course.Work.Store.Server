@@ -81,7 +81,7 @@ class UserController {
         try {
             const user = await userService.googleLogin(req.query.code);
 
-            res.json(user);
+            res.redirect(`${process.env.CLIENT_URL}?credentials=${JSON.stringify(user)}`);
         } catch (error) {
             next(error);
         }

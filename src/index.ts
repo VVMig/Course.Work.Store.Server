@@ -1,6 +1,7 @@
 import * as dotenv from 'dotenv';
 import { ApiRoutes } from './constants/Routes';
 import apiErrorMiddleware from './middlewares/ApiErrorMiddleware';
+import cors from 'cors';
 import express from 'express';
 import mongoose from 'mongoose';
 import productRouter from './routes/productRoutes';
@@ -17,6 +18,7 @@ dotenv.config();
 const swaggerSpec = swaggerJSDoc(swaggerApiOptions);
 
 //Routes
+app.use(cors());
 app.use(express.json());
 app.use(ApiRoutes.USER, userRouter);
 app.use(ApiRoutes.PRODUCT, productRouter);
