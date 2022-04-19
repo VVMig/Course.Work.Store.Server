@@ -83,6 +83,18 @@ class ProductController {
             next(error);
         }
     }
+
+    async searchProducts(req: Request<any, any, any, { text?: string }>, res: Response, next: NextFunction) {
+        try {
+            const { text } = req.query;
+
+            const products = await productService.searchProducts(text);
+
+            res.json(products);
+        } catch (error) {
+            next(error);
+        }
+    }
 }
 
 export {

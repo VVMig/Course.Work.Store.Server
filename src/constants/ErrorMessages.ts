@@ -17,7 +17,8 @@ export enum UserErrorMessages {
     WRONG_VERIFICATION_LINK = 'Link is incorrect',
     ALREADY_IN_CART = 'You have already added this product to the cart',
     ENTER_TEL = 'Mobile number is required',
-    ENTER_ADDRESS = 'Address is required'
+    ENTER_ADDRESS = 'Address is required',
+    PAYMENT_METHOD = 'Select payment method'
 }
 
 export enum ProductErrorMessages {

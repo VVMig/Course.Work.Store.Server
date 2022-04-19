@@ -24,9 +24,11 @@ export interface ICartAddBody {
     id?: string;
 }
 
-export interface IPurchaseBody extends ICartAddBody {
+export interface IPurchaseBody {
+    ids?: string[]
     amount?: number;
     address?: string;
     commentary?: string;
     tel?: string;
+    paymentMethod?: string;
 }

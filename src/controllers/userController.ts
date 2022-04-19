@@ -113,9 +113,9 @@ class UserController {
 
     async purchase(req: AuthRequest<IPurchaseBody>, res: Response, next: NextFunction) {
         try {
-            const { address, amount, commentary, id, tel } = req.body;
+            const { address, amount, commentary, ids, tel, paymentMethod } = req.body;
 
-            const cart = await userService.purchase(req.user.id, id, address, amount, commentary, tel);
+            const cart = await userService.purchase(req.user.id, ids, address, amount, commentary, tel, paymentMethod);
 
             res.json(cart);
         } catch (error) {

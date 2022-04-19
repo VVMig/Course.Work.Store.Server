@@ -9,9 +9,11 @@ const router = express.Router();
 const productController = new ProductController();
 
 router.post(Routes.PRODUCT_ADD, authMiddleware, adminMiddleware, productController.addProduct);
-router.put(Routes.PRODUCT_REMOVE, authMiddleware, adminMiddleware, productController.removeProduct);
+router.post(Routes.PRODUCT_REMOVE, authMiddleware, adminMiddleware, productController.removeProduct);
 router.get(Routes.PRODUCT_CATEGORIES, productController.getCategories);
 router.get(Routes.PRODUCT_PRODUCT, productController.getProduct);
 router.get(Routes.PRODUCT_CATEGORY, productController.getProductsByCategory);
+router.get(Routes.PRODUCT_CATEGORY, productController.getProductsByCategory);
+router.get(Routes.PRODUCT_SEARCH, productController.searchProducts);
 
 export default router;

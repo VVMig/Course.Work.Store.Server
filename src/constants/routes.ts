@@ -19,5 +19,6 @@ export enum Routes {
     PRODUCT_REMOVE = '/remove',
     PRODUCT_CATEGORIES = '/categories',
     PRODUCT_PRODUCT = '/product',
-    PRODUCT_CATEGORY = '/category'
+    PRODUCT_CATEGORY = '/category',
+    PRODUCT_SEARCH = '/search'
 }

@@ -12,6 +12,8 @@ import { v4 as uuid_v4 } from "uuid";
 import { ProductModel } from '../models/Product';
 import { UserRoles } from '../constants/Roles';
 import { generateProductResponse } from '../helpers/productServiceHelper';
+import ProductDto from 'dtos/productDto';
+import { IProduct } from 'interfaces/productModel';
 
 class UserService {
     async registration(email?: string, password?: string, firstName?: string, lastName?: string) {
@@ -203,8 +205,8 @@ class UserService {
         return user.cart;
     }
 
-    async purchase(userId: string, id?: string, address?: string, amount?: number, commentary?: string, tel?: string) {
-        if (!id) {
+    async purchase(userId: string, ids?: string[], address?: string, amount?: number, commentary?: string, tel?: string, paymentMethod?: string) {
+        if (!ids) {
             throw ApiError.BadRequest(CommonErrorMessages.INVALID_ID);
         }
 
@@ -216,11 +218,34 @@ class UserService {
             throw ApiError.BadRequest(UserErrorMessages.ENTER_ADDRESS);
         }
 
-        const user = await UserModel.findById(userId);
-        const product = await ProductModel.findById(id);
+        if(!paymentMethod) {
+            throw ApiError.BadRequest(UserErrorMessages.PAYMENT_METHOD);
+        }
 
-        if (!product) {
-            throw ApiError.BadRequest(CommonErrorMessages.INVALID_ID);
+        const user = await UserModel.findById(userId);
+
+        const productDtos: ProductDto[] = [];
+
+        await Promise.all(ids.map(async (id) => {
+            const product = await ProductModel.findById(id);
+
+            if (!product) {
+                throw ApiError.BadRequest(CommonErrorMessages.INVALID_ID);
+            }
+
+            const { product: productDto } = generateProductResponse(product);
+
+            productDtos.push(productDto);
+
+            product.amount = product.amount - 1;
+
+            await product.save();
+        }));
+
+        let cart: IProduct[] = [];
+
+        for (let index = 0; index < ids.length; index++) {
+            cart = await this.removeCart(userId, ids[index]);
         }
 
         const admin = await UserModel.findOne({ role: UserRoles.ADMIN });
@@ -230,15 +255,9 @@ class UserService {
         }
 
         const userDto = new UserDto({ ...user.toObject(), cart: user.cart, id: `${user._id}` });
-        const { product: productDto } = await generateProductResponse(product);
 
-        await mailService.sendTransactionMail(admin.email, userDto, productDto, address, tel, commentary, amount);
+        await mailService.sendTransactionMail(admin.email, userDto, productDtos, address, tel, commentary, amount, paymentMethod);
 
-        product.amount = product.amount - 1;
-
-        await product.save();
-
-        const cart = await this.removeCart(userId, id);
 
         return cart;
     }
