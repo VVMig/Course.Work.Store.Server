@@ -109,6 +109,12 @@ class ProductService {
 
         return products.map(generateProductResponse).map(product => ({ ...product.product }));
     }
+
+    async newProducts(limit: number) {
+        const products = await ProductModel.find().sort({ $natural: -1 }).limit(limit);
+
+        return products.map(generateProductResponse).map(product => ({ ...product.product }));
+    }
 }
 
 export default new ProductService();

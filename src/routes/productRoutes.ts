@@ -15,5 +15,6 @@ router.get(Routes.PRODUCT_PRODUCT, productController.getProduct);
 router.get(Routes.PRODUCT_CATEGORY, productController.getProductsByCategory);
 router.get(Routes.PRODUCT_CATEGORY, productController.getProductsByCategory);
 router.get(Routes.PRODUCT_SEARCH, productController.searchProducts);
+router.get(Routes.PRODUCT_NEW, productController.newProducts);
 
 export default router;

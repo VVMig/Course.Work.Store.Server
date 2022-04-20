@@ -95,6 +95,18 @@ class ProductController {
             next(error);
         }
     }
+
+    async newProducts(req: Request<any, any, any, { limit?: string }>, res: Response, next: NextFunction) {
+        try {
+            const { limit } = req.query;
+
+            const products = await productService.newProducts(+limit);
+
+            res.json(products);
+        } catch (error) {
+            next(error);
+        }
+    }
 }
 
 export {

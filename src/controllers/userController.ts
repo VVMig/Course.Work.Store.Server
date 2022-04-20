@@ -122,6 +122,42 @@ class UserController {
             next(error);
         }
     }
+
+    async changeRole(req: AuthRequest<{ role: string, userIds: string[] }>, res: Response, next: NextFunction) {
+        try {
+            const { role, userIds } = req.body;
+
+            const users = await userService.changeRole(userIds, role);
+
+            res.json(users);
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async getUsersList(req: Request<any, any, any, { page?: string }>, res: Response, next: NextFunction) {
+        try {
+            const { page } = req.query;
+
+            const listResponse = await userService.getUsersList(+page ?? 1);
+
+            res.json(listResponse);
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async deleteUsers(req: AuthRequest<{userIds: string[]}>, res: Response, next: NextFunction) {
+        try {
+            const { userIds } = req.body;
+
+            const deletedIds = await userService.deleteUsers(userIds);
+
+            res.json(deletedIds);
+        } catch (error) {
+            next(error);
+        }
+    }
 }
 
 export {

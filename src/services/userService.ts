@@ -92,6 +92,10 @@ class UserService {
             });
         }
 
+        if(!user.isVerified) {
+            user.isVerified = true;
+        }
+
         const response = await generateUserResponse(user);
 
         return response;
@@ -132,9 +136,9 @@ class UserService {
     async getUserData(_id: string) {
         const user = await UserModel.findOne({ _id }).populate('cart');
 
-        const userDto = new UserDto({ ...user.toObject(), cart: user.cart, id: `${user._id}` });
+        const userDto = await generateUserResponse(user, false);
 
-        return userDto;
+        return userDto.user;
     }
 
     async verifyUser(verifiedUrl?: string) {
@@ -153,6 +157,21 @@ class UserService {
         await user.save();
 
         return true;
+    }
+
+    async deleteUsers(ids: string[]) {
+        for (let index = 0; index < ids.length; index++) {
+            const user = await UserModel.findById(ids[index]);
+
+            if(!user) {
+                throw ApiError.BadRequest(CommonErrorMessages.INVALID_ID);
+            }
+
+            await user.delete();
+        }
+
+
+        return ids;
     }
 
     async addCart(userId: string, id?: string) {
@@ -254,12 +273,49 @@ class UserService {
             throw ApiError.BadRequest(CommonErrorMessages.ADMIN_REQUIRED);
         }
 
-        const userDto = new UserDto({ ...user.toObject(), cart: user.cart, id: `${user._id}` });
+        const userDto = await generateUserResponse(user, false);
 
         await mailService.sendTransactionMail(admin.email, userDto, productDtos, address, tel, commentary, amount, paymentMethod);
 
-
         return cart;
+    }
+
+    async changeRole(userIds: string[], role: string) {
+        const usersResponse = [];
+
+        for (let index = 0; index < userIds.length; index++) {            
+            const user = await UserModel.findById(userIds[index]);
+            
+            if(!user) {
+                throw ApiError.BadRequest(CommonErrorMessages.INVALID_ID);
+            }
+
+            user.role = role as UserRoles;
+
+            await user.save();
+
+            const userResponse = (await generateUserResponse(user, false)).user;
+
+            usersResponse.push(userResponse);
+        }
+
+
+        return usersResponse;
+    }
+
+    async getUsersList(page: number) {
+        const usersPerPage = 10;
+
+        const allUsersAmount = await UserModel.count();
+
+        const users = await UserModel.find().sort({ _id: 1 }).skip(page > 0 ? ( ( page - 1 ) * usersPerPage ) : 0).limit(usersPerPage);
+
+        const mappedUsers = (await Promise.all(users.map(user => generateUserResponse(user, false)))).map(user => user.user);
+
+        return {
+            users: mappedUsers,
+            totalCounts: allUsersAmount
+        };
     }
 }
 
