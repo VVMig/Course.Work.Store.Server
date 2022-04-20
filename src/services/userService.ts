@@ -35,7 +35,7 @@ class UserService {
 
         const verificationId = uuid_v4();
 
-        const verifiedUrl = `${process.env.URL}${ApiRoutes.USER}${Routes.USER_VERIFICATION}/${verificationId}`;
+        const verifiedUrl = `${process.env.SERVER_URL}${ApiRoutes.USER}${Routes.USER_VERIFICATION}/${verificationId}`;
 
         await mailService.sendVerificationMail(email, verifiedUrl);
 

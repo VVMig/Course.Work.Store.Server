@@ -13,7 +13,7 @@ const swaggerDefinition: SwaggerDefinition = {
             description: 'Development server',
         },
         {
-            url: process.env.URL,
+            url: process.env.SERVER_URL,
             description: 'Production server'
         }
     ],
