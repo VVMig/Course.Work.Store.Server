@@ -4,6 +4,8 @@ import * as nodemailer from "nodemailer";
 
 class MailService {
   async sendVerificationMail(to: string, link: string) {
+    console.log(process.env.SMTP_PORT, process.env.SMTP_HOST, process.env.SMTP_USER, process.env.SMTP_PASSWORD)
+
     const transporter = nodemailer.createTransport({
       port: Number(process.env.SMTP_PORT) ?? 0,
       host: process.env.SMTP_HOST,
