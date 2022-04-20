@@ -29,21 +29,39 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const productServiceHelper_1 = require("../helpers/productServiceHelper");
+const googleapis_1 = require("googleapis");
 const nodemailer = __importStar(require("nodemailer"));
+const createTransporter = () => __awaiter(void 0, void 0, void 0, function* () {
+    const oauth2Client = new googleapis_1.google.auth.OAuth2(process.env.OAUTH_CLIENT_ID, process.env.OAUTH_CLIENT_SECRET, "https://developers.google.com/oauthplayground");
+    oauth2Client.setCredentials({
+        refresh_token: process.env.OAUTH_REFRESH_TOKEN
+    });
+    const accessToken = yield new Promise((resolve, reject) => {
+        oauth2Client.getAccessToken((err, token) => {
+            if (err) {
+                reject("Failed to create access token :(");
+            }
+            resolve(token);
+        });
+    });
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            type: "OAuth2",
+            user: process.env.SMTP_USER,
+            accessToken,
+            clientId: process.env.OAUTH_CLIENT_ID,
+            clientSecret: process.env.OAUTH_CLIENT_SECRET,
+            refreshToken: process.env.OAUTH_REFRESH_TOKEN
+        }
+    });
+    return transporter;
+});
 class MailService {
     sendVerificationMail(to, link) {
-        var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            console.log(process.env.SMTP_PORT, process.env.SMTP_HOST, process.env.SMTP_USER, process.env.SMTP_PASSWORD, process.env.NODE_ENV, process.env.NODE_ENV == 'production');
-            const transporter = nodemailer.createTransport({
-                port: (_a = Number(process.env.SMTP_PORT)) !== null && _a !== void 0 ? _a : 0,
-                host: process.env.SMTP_HOST,
-                secure: process.env.NODE_ENV == 'production',
-                auth: {
-                    user: process.env.SMTP_USER,
-                    pass: process.env.SMTP_PASSWORD,
-                },
-            });
+            console.log(process.env.SMTP_PORT, process.env.SMTP_HOST, process.env.SMTP_USER, process.env.SMTP_PASSWORD, process.env.NODE_ENV, process.env.NODE_ENV == 'production', process.env.OAUTH_CLIENT_ID);
+            const transporter = yield createTransporter();
             yield transporter.sendMail({
                 from: "Course Work",
                 to,
@@ -55,17 +73,8 @@ class MailService {
         });
     }
     sendTransactionMail(to, user, products, address, tel, commentary, amount, paymentMethod) {
-        var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            const transporter = nodemailer.createTransport({
-                port: (_a = Number(process.env.SMTP_PORT)) !== null && _a !== void 0 ? _a : 0,
-                host: process.env.SMTP_HOST,
-                secure: false,
-                auth: {
-                    user: process.env.SMTP_USER,
-                    pass: process.env.SMTP_PASSWORD,
-                },
-            });
+            const transporter = yield createTransporter();
             yield transporter.sendMail({
                 from: "Course Work",
                 to,
