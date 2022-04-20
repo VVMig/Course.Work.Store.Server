@@ -34,11 +34,11 @@ class MailService {
     sendVerificationMail(to, link) {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            console.log(process.env.SMTP_PORT, process.env.SMTP_HOST, process.env.SMTP_USER, process.env.SMTP_PASSWORD);
+            console.log(process.env.SMTP_PORT, process.env.SMTP_HOST, process.env.SMTP_USER, process.env.SMTP_PASSWORD, process.env.NODE_ENV);
             const transporter = nodemailer.createTransport({
                 port: (_a = Number(process.env.SMTP_PORT)) !== null && _a !== void 0 ? _a : 0,
                 host: process.env.SMTP_HOST,
-                secure: false,
+                secure: process.env.NODE_ENV === 'production',
                 auth: {
                     user: process.env.SMTP_USER,
                     pass: process.env.SMTP_PASSWORD,
