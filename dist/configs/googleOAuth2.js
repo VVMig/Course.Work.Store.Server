@@ -6,7 +6,7 @@ const googleapis_1 = require("googleapis");
 const oauth2Client = new googleapis_1.google.auth.OAuth2({
     clientId: process.env.GMAIL_CLIENT_ID || '8183718671-14dctcgoatjr0v072d46k0e6roohjuvi.apps.googleusercontent.com',
     clientSecret: process.env.GMAIL_CLIENT_SECRET || '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',
-    redirectUri: process.env.SERVER_URL ? `${process.env.SERVER_URL}${Routes_1.ApiRoutes.USER}${Routes_1.Routes.USER_GMAIL_AUTH_CALLBACK}` : 'http://localhost:3000/api/user/gmailAuthCallback'
+    redirectUri: process.env.SERVER_URL ? `${process.env.SERVER_URL}${Routes_1.ApiRoutes.USER}${Routes_1.Routes.USER_GMAIL_AUTH_CALLBACK}` : 'https://vvmig-server-bsu.herokuapp.com/api/user/gmailAuthCallback'
 });
 exports.oauth2Client = oauth2Client;
 googleapis_1.google.options({
