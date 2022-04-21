@@ -211,9 +211,10 @@ class UserService {
                 if (!product) {
                     throw api_error_1.default.BadRequest(ErrorMessages_1.CommonErrorMessages.INVALID_ID);
                 }
+                product.transactionsAmount = product.transactionsAmount + amount;
                 const { product: productDto } = (0, productServiceHelper_1.generateProductResponse)(product);
                 productDtos.push(productDto);
-                product.amount = product.amount - 1;
+                product.amount = product.amount - amount;
                 yield product.save();
             })));
             let cart = [];

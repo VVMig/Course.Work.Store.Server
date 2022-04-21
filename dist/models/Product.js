@@ -35,6 +35,10 @@ const productSchema = new mongoose_1.default.Schema({
     },
     category: {
         type: String
+    },
+    transactionsAmount: {
+        type: Number,
+        default: 0
     }
 });
 exports.ProductModel = mongoose_1.default.model('Product', productSchema);

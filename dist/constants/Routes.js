@@ -28,6 +28,9 @@ var Routes;
     Routes["PRODUCT_PRODUCT"] = "/product";
     Routes["PRODUCT_CATEGORY"] = "/category";
     Routes["PRODUCT_SEARCH"] = "/search";
+    Routes["PRODUCT_ALL"] = "/all";
     Routes["PRODUCT_NEW"] = "/new";
+    Routes["PRODUCT_EDIT"] = "/edit";
+    Routes["PRODUCT_POPULAR"] = "/popular";
 })(Routes = exports.Routes || (exports.Routes = {}));
 //# sourceMappingURL=Routes.js.map

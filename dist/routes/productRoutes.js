@@ -35,6 +35,9 @@ router.get(Routes_1.Routes.PRODUCT_CATEGORIES, productController.getCategories);
 router.get(Routes_1.Routes.PRODUCT_PRODUCT, productController.getProduct);
 router.get(Routes_1.Routes.PRODUCT_CATEGORY, productController.getProductsByCategory);
 router.get(Routes_1.Routes.PRODUCT_SEARCH, productController.searchProducts);
+router.get(Routes_1.Routes.PRODUCT_ALL, ApiAuthMiddleware_1.default, ApiAdminMiddleware_1.default, productController.getAllProducts);
 router.get(Routes_1.Routes.PRODUCT_NEW, productController.newProducts);
+router.get(Routes_1.Routes.PRODUCT_POPULAR, productController.getPopularProducts);
+router.put(Routes_1.Routes.PRODUCT_EDIT, ApiAuthMiddleware_1.default, ApiAdminMiddleware_1.default, productController.editProduct);
 exports.default = router;
 //# sourceMappingURL=productRoutes.js.map

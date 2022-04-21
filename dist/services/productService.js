@@ -21,7 +21,7 @@ const common_1 = require("../helpers/common");
 const imagekit_1 = __importDefault(require("imagekit"));
 const uuid_1 = require("uuid");
 class ProductService {
-    addProduct({ amount, briefInformation, description, images, price, title, commonId, category }) {
+    addProduct({ amount, briefInformation, description, images, price, title, commonId, category, }) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!amount || !price || !title || !category) {
                 throw api_error_1.default.BadRequest(ErrorMessages_1.ProductErrorMessages.REQUIRED_FIELDS);
@@ -31,19 +31,21 @@ class ProductService {
             }
             const imagekit = new imagekit_1.default({
                 privateKey: process.env.IMAGERKIT_PRIVATE_KEY,
-                publicKey: 'public_f1Hak6ATynuqOpVdiDzKNI6a1pU=',
-                urlEndpoint: 'https://ik.imagekit.io/9wyroybev'
+                publicKey: "public_f1Hak6ATynuqOpVdiDzKNI6a1pU=",
+                urlEndpoint: "https://ik.imagekit.io/9wyroybev",
             });
             const imagesStore = [];
-            for (let imageIndex = 0; imageIndex < images.length; imageIndex++) {
-                const res = yield imagekit.upload({
-                    file: images[imageIndex],
-                    fileName: (0, uuid_1.v4)()
-                });
-                imagesStore.push({
-                    isMain: imageIndex === 0,
-                    url: res.thumbnailUrl
-                });
+            if (images) {
+                for (let imageIndex = 0; imageIndex < images.length; imageIndex++) {
+                    const res = yield imagekit.upload({
+                        file: images[imageIndex],
+                        fileName: (0, uuid_1.v4)(),
+                    });
+                    imagesStore.push({
+                        isMain: imageIndex === 0,
+                        url: res.thumbnailUrl,
+                    });
+                }
             }
             const product = yield Product_1.ProductModel.create({
                 price,
@@ -53,8 +55,50 @@ class ProductService {
                 title,
                 images: imagesStore,
                 commonId,
-                category
+                category,
             });
+            return (0, productServiceHelper_1.generateProductResponse)(product);
+        });
+    }
+    editProduct(id, { amount, briefInformation, description, images, price, title, commonId, category, }) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const product = yield Product_1.ProductModel.findById(id);
+            if (!product) {
+                throw api_error_1.default.BadRequest(ErrorMessages_1.CommonErrorMessages.INVALID_ID);
+            }
+            if (!amount || !price || !title || !category) {
+                throw api_error_1.default.BadRequest(ErrorMessages_1.ProductErrorMessages.REQUIRED_FIELDS);
+            }
+            if (!Object.values(Category_1.Category).includes(category)) {
+                throw api_error_1.default.BadRequest(ErrorMessages_1.ProductErrorMessages.INVALID_CATEGORY);
+            }
+            const imagekit = new imagekit_1.default({
+                privateKey: process.env.IMAGERKIT_PRIVATE_KEY,
+                publicKey: "public_f1Hak6ATynuqOpVdiDzKNI6a1pU=",
+                urlEndpoint: "https://ik.imagekit.io/9wyroybev",
+            });
+            const imagesStore = [];
+            if (images) {
+                for (let imageIndex = 0; imageIndex < images.length; imageIndex++) {
+                    const res = yield imagekit.upload({
+                        file: images[imageIndex],
+                        fileName: (0, uuid_1.v4)(),
+                    });
+                    imagesStore.push({
+                        isMain: imageIndex === 0,
+                        url: res.thumbnailUrl,
+                    });
+                }
+            }
+            product.amount = amount || product.amount;
+            product.briefInformation = briefInformation || product.briefInformation;
+            product.description = description || product.description;
+            product.title = title || product.title;
+            product.amount = amount || product.amount;
+            product.price = price || product.price;
+            product.category = category || product.category;
+            product.images = imagesStore;
+            yield product.save();
             return (0, productServiceHelper_1.generateProductResponse)(product);
         });
     }
@@ -77,7 +121,10 @@ class ProductService {
             if (!ErrorMessages_1.ProductErrorMessages) {
                 throw api_error_1.default.BadRequest(ErrorMessages_1.CommonErrorMessages.INVALID_ID);
             }
-            return products.map(productServiceHelper_1.generateProductResponse).map(product => (Object.assign({}, product.product)));
+            return products
+                .map(productServiceHelper_1.generateProductResponse)
+                .map((product) => (Object.assign({}, product.product)))
+                .filter((product) => product.amount > 0);
         });
     }
     removeProduct(id) {
@@ -97,19 +144,49 @@ class ProductService {
             if (!text) {
                 return [];
             }
-            const searchRegex = new RegExp(text, 'i');
+            const searchRegex = new RegExp(text, "i");
             const products = yield Product_1.ProductModel.find({
                 title: {
-                    $regex: searchRegex
-                }
+                    $regex: searchRegex,
+                },
             });
-            return products.map(productServiceHelper_1.generateProductResponse).map(product => (Object.assign({}, product.product)));
+            return products
+                .map(productServiceHelper_1.generateProductResponse)
+                .map((product) => (Object.assign({}, product.product)))
+                .filter((product) => product.amount > 0);
+        });
+    }
+    getAllProducts(page) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const productsPerPage = 10;
+            const allProductsAmount = yield Product_1.ProductModel.count();
+            const products = yield Product_1.ProductModel.find()
+                .sort({ _id: 1 })
+                .skip(page > 0 ? (page - 1) * productsPerPage : 0)
+                .limit(productsPerPage);
+            const mappedProducts = (yield Promise.all(products.map((user) => (0, productServiceHelper_1.generateProductResponse)(user)))).map((product) => product.product);
+            return {
+                products: mappedProducts,
+                totalCounts: allProductsAmount,
+            };
         });
     }
     newProducts(limit) {
         return __awaiter(this, void 0, void 0, function* () {
-            const products = yield Product_1.ProductModel.find().sort({ $natural: -1 }).limit(limit);
-            return products.map(productServiceHelper_1.generateProductResponse).map(product => (Object.assign({}, product.product)));
+            const products = yield Product_1.ProductModel.find()
+                .sort({ $natural: -1 })
+                .limit(limit);
+            return products
+                .map(productServiceHelper_1.generateProductResponse)
+                .map((product) => (Object.assign({}, product.product)));
+        });
+    }
+    getSortedProduct(field, limit) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const products = yield Product_1.ProductModel.find().sort({ [field]: -1 }).limit(limit);
+            return products
+                .map(productServiceHelper_1.generateProductResponse)
+                .map((product) => (Object.assign({}, product.product)));
         });
     }
 }
