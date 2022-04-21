@@ -178,7 +178,8 @@ class ProductService {
                 .limit(limit);
             return products
                 .map(productServiceHelper_1.generateProductResponse)
-                .map((product) => (Object.assign({}, product.product)));
+                .map((product) => (Object.assign({}, product.product)))
+                .filter((product) => product.amount > 0);
         });
     }
     getSortedProduct(field, limit) {
@@ -186,7 +187,8 @@ class ProductService {
             const products = yield Product_1.ProductModel.find().sort({ [field]: -1 }).limit(limit);
             return products
                 .map(productServiceHelper_1.generateProductResponse)
-                .map((product) => (Object.assign({}, product.product)));
+                .map((product) => (Object.assign({}, product.product)))
+                .filter((product) => product.amount > 0);
         });
     }
 }

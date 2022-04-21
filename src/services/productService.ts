@@ -219,7 +219,8 @@ class ProductService {
 
     return products
       .map(generateProductResponse)
-      .map((product) => ({ ...product.product }));
+      .map((product) => ({ ...product.product }))
+      .filter((product) => product.amount > 0);
   }
 
   async getSortedProduct(field: string, limit: number) {
@@ -227,7 +228,8 @@ class ProductService {
 
     return products
         .map(generateProductResponse)
-        .map((product) => ({ ...product.product }));
+        .map((product) => ({ ...product.product }))
+        .filter((product) => product.amount > 0);
   }
 }
 
