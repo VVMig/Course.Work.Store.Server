@@ -96,11 +96,45 @@ class ProductController {
         }
     }
 
+    async getAllProducts(req: Request<any, any, any, { page?: string }>, res: Response, next: NextFunction) {
+        try {
+            const { page } = req.query;
+
+            const products = await productService.getAllProducts(+page);
+
+            res.json(products);
+        } catch (error) {
+            next(error);
+        }
+    }
+
     async newProducts(req: Request<any, any, any, { limit?: string }>, res: Response, next: NextFunction) {
         try {
             const { limit } = req.query;
 
             const products = await productService.newProducts(+limit);
+
+            res.json(products);
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async editProduct(req: AuthRequest<IAddProduct & {id: string}>, res: Response, next: NextFunction) {
+        try {
+            const { id, ...productFields } = req.body;
+
+            const products = await productService.editProduct(id, productFields);
+
+            res.json(products);
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async getPopularProducts(req: Request, res: Response, next: NextFunction) {
+        try {
+            const products = await productService.getSortedProduct('transactionsAmount', 4);
 
             res.json(products);
         } catch (error) {

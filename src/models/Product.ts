@@ -31,6 +31,10 @@ const productSchema: Schema<IProduct> = new mongoose.Schema({
     },
     category: {
         type: String
+    },
+    transactionsAmount: {
+        type: Number,
+        default: 0
     }
 });
 

@@ -252,11 +252,13 @@ class UserService {
                 throw ApiError.BadRequest(CommonErrorMessages.INVALID_ID);
             }
 
+            product.transactionsAmount = product.transactionsAmount + amount;
+
             const { product: productDto } = generateProductResponse(product);
 
             productDtos.push(productDto);
 
-            product.amount = product.amount - 1;
+            product.amount = product.amount - amount;
 
             await product.save();
         }));

@@ -24,5 +24,8 @@ export enum Routes {
     PRODUCT_PRODUCT = '/product',
     PRODUCT_CATEGORY = '/category',
     PRODUCT_SEARCH = '/search',
-    PRODUCT_NEW = '/new'
+    PRODUCT_ALL = '/all',
+    PRODUCT_NEW = '/new',
+    PRODUCT_EDIT = '/edit',
+    PRODUCT_POPULAR = '/popular'
 }

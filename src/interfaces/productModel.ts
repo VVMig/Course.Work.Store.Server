@@ -16,4 +16,5 @@ export interface IProduct extends Document {
     commonId: string;
     briefInformation: string;
     category: Category;
+    transactionsAmount: number;
 }

@@ -22,4 +22,5 @@ export interface IProductDTO {
     commonId: string;
     briefInformation: string;
     category: Category;
+    transactionsAmount: number;
 }

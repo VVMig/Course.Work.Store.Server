@@ -12,8 +12,9 @@ export default class ProductDto implements IProductDTO {
     amount: number;
     commonId: string;
     category: Category;
+    transactionsAmount: number;
 
-    constructor({ id, title, description, price, briefInformation, images, amount, commonId, category }: IProductDTO) {
+    constructor({ id, title, description, price, briefInformation, images, amount, commonId, category, transactionsAmount }: IProductDTO) {
         this.title = title;
         this.description = description;
         this.price = price;
@@ -23,5 +24,6 @@ export default class ProductDto implements IProductDTO {
         this.amount = amount;
         this.commonId = commonId;
         this.category = category;
+        this.transactionsAmount = transactionsAmount ?? 0;
     }
 }
