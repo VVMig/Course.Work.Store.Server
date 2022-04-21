@@ -41,7 +41,7 @@ class UserService {
             const hashPassword = yield bcrypt_1.default.hash(password, 3);
             const verificationId = (0, uuid_1.v4)();
             const verifiedUrl = `${process.env.SERVER_URL}${Routes_1.ApiRoutes.USER}${Routes_1.Routes.USER_VERIFICATION}/${verificationId}`;
-            yield mailService_1.default.sendVerificationMail(email, verifiedUrl);
+            yield mailService_1.default.sendVerificationMail(email, verifiedUrl, `${firstName} ${lastName}`);
             const user = yield User_1.UserModel.create({
                 email,
                 password: hashPassword,
@@ -225,7 +225,7 @@ class UserService {
                 throw api_error_1.default.BadRequest(ErrorMessages_1.CommonErrorMessages.ADMIN_REQUIRED);
             }
             const userDto = yield (0, userServiceHelper_1.generateUserResponse)(user, false);
-            yield mailService_1.default.sendTransactionMail(admin.email, userDto, productDtos, address, tel, commentary, amount, paymentMethod);
+            yield mailService_1.default.sendTransactionMail(admin.email, userDto.user, productDtos, address, tel, commentary, amount, paymentMethod);
             return cart;
         });
     }

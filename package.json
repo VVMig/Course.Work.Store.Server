@@ -5,7 +5,8 @@
   "main": "dist/index.js",
   "scripts": {
     "start": "tsc && node dist/index.js",
-    "start:dev": "nodemon src/index.ts"
+    "start:dev": "nodemon src/index.ts",
+    "start:prod": "rsc && NODE_ENV=production node dist/index.js"
   },
   "repository": "git+https://github.com/VVMig/Course.Work.Store.Server.git",
   "author": "vladimir.migay",

@@ -37,7 +37,7 @@ class UserService {
 
         const verifiedUrl = `${process.env.SERVER_URL}${ApiRoutes.USER}${Routes.USER_VERIFICATION}/${verificationId}`;
 
-        await mailService.sendVerificationMail(email, verifiedUrl);
+        await mailService.sendVerificationMail(email, verifiedUrl, `${firstName} ${lastName}`);
 
         const user = await UserModel.create({
             email,
@@ -275,7 +275,7 @@ class UserService {
 
         const userDto = await generateUserResponse(user, false);
 
-        await mailService.sendTransactionMail(admin.email, userDto, productDtos, address, tel, commentary, amount, paymentMethod);
+        await mailService.sendTransactionMail(admin.email, userDto.user, productDtos, address, tel, commentary, amount, paymentMethod);
 
         return cart;
     }
