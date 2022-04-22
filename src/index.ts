@@ -17,9 +17,12 @@ dotenv.config();
 
 const swaggerSpec = swaggerJSDoc(swaggerApiOptions);
 
-//Routes
 app.use(cors());
-app.use(express.json());
+app.use(express.json({
+    limit: '25mb'
+}));
+
+//Routes
 app.use(ApiRoutes.USER, userRouter);
 app.use(ApiRoutes.PRODUCT, productRouter);
 app.use(ApiRoutes.DOCS, swaggerUI.serve, swaggerUI.setup(swaggerSpec));

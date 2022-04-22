@@ -223,7 +223,7 @@ class ProductService {
       .filter((product) => product.amount > 0);
   }
 
-  async getSortedProduct(field: string, limit: number) {
+  async getSortedProduct(field: string, limit = 8) {
     const products = await ProductModel.find().sort({ [field]: -1 }).limit(limit);
 
     return products

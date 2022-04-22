@@ -134,7 +134,7 @@ class ProductController {
 
     async getPopularProducts(req: Request, res: Response, next: NextFunction) {
         try {
-            const products = await productService.getSortedProduct('transactionsAmount', 4);
+            const products = await productService.getSortedProduct('transactionsAmount');
 
             res.json(products);
         } catch (error) {
