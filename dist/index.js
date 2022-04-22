@@ -47,9 +47,11 @@ const PORT = (_a = process.env.PORT) !== null && _a !== void 0 ? _a : 3000;
 const app = (0, express_1.default)();
 dotenv.config();
 const swaggerSpec = (0, swagger_jsdoc_1.default)(swagger_1.swaggerApiOptions);
-//Routes
 app.use((0, cors_1.default)());
-app.use(express_1.default.json());
+app.use(express_1.default.json({
+    limit: '25mb'
+}));
+//Routes
 app.use(Routes_1.ApiRoutes.USER, userRoutes_1.default);
 app.use(Routes_1.ApiRoutes.PRODUCT, productRoutes_1.default);
 app.use(Routes_1.ApiRoutes.DOCS, swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swaggerSpec));

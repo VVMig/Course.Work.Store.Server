@@ -182,7 +182,7 @@ class ProductService {
                 .filter((product) => product.amount > 0);
         });
     }
-    getSortedProduct(field, limit) {
+    getSortedProduct(field, limit = 8) {
         return __awaiter(this, void 0, void 0, function* () {
             const products = yield Product_1.ProductModel.find().sort({ [field]: -1 }).limit(limit);
             return products

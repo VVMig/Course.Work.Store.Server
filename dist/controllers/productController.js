@@ -148,7 +148,7 @@ class ProductController {
     getPopularProducts(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const products = yield productService_1.default.getSortedProduct('transactionsAmount', 4);
+                const products = yield productService_1.default.getSortedProduct('transactionsAmount');
                 res.json(products);
             }
             catch (error) {
